@@ -1,6 +1,9 @@
+require 'fileutils'
+
 class Wizard
 
-  attr_accessor :extension_id, :developer_id, :created_at, :extension_name
+  attr_accessor :extension_id, :developer_id, :created_at, :extension_name, :description
+  VERSION = 1
 
   def set_extension_id(ext)
     raise ArgumentError, 'Argument is not a String' unless ext.size == 36 && ext.is_a?(String)
@@ -51,6 +54,24 @@ class Wizard
     self.extension_name
   end
 
+  def set_description(desc)
+    raise ArgumentError, 'Extension description cannot be empty' unless desc.size > 0
+    self.description = desc
+  end
+
+  def get_description
+    self.description
+  end
+
+  # Project Structure
+  def create_project_root_folder
+    Dir.chdir('..')
+    raise Exception, "Folder #{self.get_extension_name} already exists" unless !File.directory?("#{self.get_extension_name}")
+    # make a new dir
+    FileUtils.mkdir(self.get_extension_name)
+  end
+
+
 end
 
 w = Wizard.new
@@ -58,3 +79,6 @@ w.set_extension_id("123456789012345678901234567890123456")
 puts w.get_extension_id
 w.set_developer_id("12345678")
 puts w.get_developer_id
+w.set_extension_name "OCCS Extension"
+puts w.get_extension_name
+w.create_project_root_folder

@@ -1,5 +1,6 @@
 require 'rspec'
 require 'rspec/its'
+require 'fileutils'
 require '../lib/occs-wizard'
 
 describe Wizard do
@@ -56,5 +57,23 @@ describe Wizard do
       expect(@wizard.set_extension_name(string)).to eq("extensionname")
     end
 
+    # description
+    it "should throw if the description field is empty" do
+      description = ""
+      expect { @wizard.set_description(description)}.to raise_error(ArgumentError)
+    end
+
   end
+
+  # Project Structure Tests
+  context 'Check project structure' do
+
+    # Root directory
+    it 'should throw if the root directory already exists' do
+      @wizard.set_extension_name('test')
+      expect { @wizard.create_project_root_folder }.to raise_error(Exception)
+    end
+
+  end
+
 end
