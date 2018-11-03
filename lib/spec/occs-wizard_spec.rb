@@ -1,6 +1,7 @@
 require 'rspec'
 require 'rspec/its'
 require 'fileutils'
+require 'json'
 require '../lib/occs-wizard'
 
 describe Wizard do
@@ -53,8 +54,8 @@ describe Wizard do
     end
 
     it 'should not contains empty spaces and it should be all lowercases' do
-      string = "Extension Name"
-      expect(@wizard.set_extension_name(string)).to eq("extensionname")
+      @wizard.set_extension_name("Extension Name")
+      expect(@wizard.get_extension_name).to eq("extensionname")
     end
 
     # description
@@ -70,8 +71,21 @@ describe Wizard do
 
     # Root directory
     it 'should throw if the root directory already exists' do
-      @wizard.set_extension_name('test')
       expect { @wizard.create_project_root_folder }.to raise_error(Exception)
+    end
+
+  end
+
+  # File creation Tests
+  context 'Check file creation process' do
+
+    # Ext.json file
+    it 'should create a new json file' do
+      ext_json = {
+          name: "Test",
+          version: 1
+      }
+      expect(ext_json).to equal(ext_json.to_hash)
     end
 
   end

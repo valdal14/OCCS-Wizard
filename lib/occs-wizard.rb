@@ -1,8 +1,9 @@
 require 'fileutils'
+require 'json'
 
 class Wizard
 
-  attr_accessor :extension_id, :developer_id, :created_at, :extension_name, :description
+  attr_accessor :extension_id, :developer_id, :created_by, :created_at, :extension_name, :description
   VERSION = 1
 
   def set_extension_id(ext)
@@ -44,14 +45,21 @@ class Wizard
     self.created_at
   end
 
+  def set_created_by(name = "OCCS Wizard Developer")
+    self.created_by = name
+  end
+
+  def get_created_by
+    self.created_by
+  end
+
   def set_extension_name(ext_name)
     raise ArgumentError, 'Extension name cannot be empty' unless ext_name.size > 0
-    name = ext_name.delete(' ').downcase
-    self.extension_name = name
+    self.extension_name = ext_name
   end
 
   def get_extension_name
-    self.extension_name
+    ext_name = self.extension_name.delete(' ').downcase
   end
 
   def set_description(desc)
@@ -63,11 +71,39 @@ class Wizard
     self.description
   end
 
+  # crate the ext.json file
+  def create_ext_json_file(directory)
+    ext_json = {
+        extensionID: self.get_extension_id,
+        developerID: self.get_developer_id,
+        createdBy: self.created_by,
+        name: self.get_extension_name,
+        version: VERSION,
+        timeCreated: self.get_created_at,
+        description: self.get_description
+    }
+    # write the file
+    File.open(directory,"w") do |f|
+      f.write(ext_json.to_json)
+    end
+
+  end
+
   # Project Structure
   def create_project_root_folder
     Dir.chdir('..')
-    raise Exception, "Folder #{self.get_extension_name} already exists" unless !File.directory?("#{self.get_extension_name}")
-    # make a new dir
+    raise Exception, "Folder #{self.extension_name} already exists" unless !File.directory?("#{self.extension_name}")
+    # make a new root dir with the extension name
+    FileUtils.mkdir(self.extension_name)
+    # enter inside the new root dirt
+    Dir.chdir("#{self.extension_name}")
+    # create the widget folder
+    FileUtils.mkdir('widget')
+    # create the file ext.json
+    self.create_ext_json_file("ext.json")
+    # enter inside widget folder
+    Dir.chdir('./widget')
+    # create the extension name folder with no spaces and lowered
     FileUtils.mkdir(self.get_extension_name)
   end
 
@@ -81,4 +117,10 @@ w.set_developer_id("12345678")
 puts w.get_developer_id
 w.set_extension_name "OCCS Extension"
 puts w.get_extension_name
+w.set_created_by
+w.get_created_by
+w.set_created_at
+w.get_created_at
+w.set_description("New OCCS Extension")
+w.get_description
 w.create_project_root_folder
