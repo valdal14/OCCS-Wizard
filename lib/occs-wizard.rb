@@ -84,9 +84,29 @@ class Wizard
     }
     # write the file
     File.open(directory,"w") do |f|
-      f.write(ext_json.to_json)
+      # call the convert_to_json private method and write a json file
+      f.write(convert_to_json(ext_json))
     end
+  end
 
+  # create the file widget.json
+  def create_widget_json_file(directory)
+    widget_json = {
+        name: self.get_extension_name,
+        version: VERSION,
+        global: false,
+        javascript: "widget-#{self.get_extension_name}-js",
+        pageTypes: ["home"],
+        imports: ["products"],
+        jsEditable: true,
+        config: {}
+    }
+
+    # write the file
+    File.open(directory,"w") do |f|
+      # call the convert_to_json private method and write a json file
+      f.write(convert_to_json(widget_json))
+    end
   end
 
   # Project Structure
@@ -105,8 +125,30 @@ class Wizard
     Dir.chdir('./widget')
     # create the extension name folder with no spaces and lowered
     FileUtils.mkdir(self.get_extension_name)
+    # enter inside the extensionname folder
+    Dir.chdir("./#{self.get_extension_name }")
+    # make the template folder
+    FileUtils.mkdir("templates")
+    # make the js folder
+    FileUtils.mkdir("js")
+    # make the less folder
+    FileUtils.mkdir("less")
+
+    # need to create js less and display.template file yet
+    #
+
+    # write the widget.json file
+    self.create_widget_json_file("widget.json")
+
+
   end
 
+  private
+  def convert_to_json(string)
+    json = string.to_json
+    json_formatted = JSON.parse(json)
+    JSON.pretty_generate(json_formatted)
+  end
 
 end
 
