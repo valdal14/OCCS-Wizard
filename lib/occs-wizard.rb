@@ -109,6 +109,53 @@ class Wizard
     end
   end
 
+  # create the display.template file
+  def create_display_template_file(directory)
+    html = %{<!-- Template File -->\n
+<div class="myWidget">Hello World</div>}
+
+    File.open(directory, "w") do |f|
+      f.write(html)
+    end
+  end
+
+  # create the less file
+  def create_less_file(directory)
+    less = %{/* Widget CSS Less */\n
+.myWidget {}}
+
+    File.open(directory, "w") do |f|
+      f.write(less)
+    end
+  end
+
+  # create the javascript file
+  def create_js_file(directory)
+    js = %{// Javascript widget file\n
+    define(\n
+      // Dependencies\n
+      ['jquery', 'knockout'],\n
+      // Module Implementation\n
+      function(ko) {\n
+         // We recommend enabling strict checking mode\n
+         'use strict';\n
+         // Private variables and functions can be defined here...\n
+         var SOME_CONSTANT = 1024;\n
+         var privateMethod = function () {\n
+           // ...\n
+         };\n
+         return {\n
+          // Widget JS\n
+          // Some member variables...\n
+          // Some public methods...\n
+        }\n
+    });}
+
+    File.open(directory, "w") do |f|
+      f.write(js)
+    end
+  end
+
   # Project Structure
   def create_project_root_folder
     Dir.chdir('..')
@@ -133,13 +180,28 @@ class Wizard
     FileUtils.mkdir("js")
     # make the less folder
     FileUtils.mkdir("less")
-
-    # need to create js less and display.template file yet
-    #
-
     # write the widget.json file
     self.create_widget_json_file("widget.json")
-
+    # move into the templates folder
+    Dir.chdir("./templates")
+    # write the display.template file
+    self.create_display_template_file("display.template")
+    # move back one dir
+    Dir.chdir("..")
+    # move inside the less folder
+    Dir.chdir("./less")
+    # write the less file
+    self.create_less_file("widget.less")
+    # move back one dir
+    Dir.chdir("..")
+    # move inside the js folder
+    Dir.chdir("./js")
+    # write the js file
+    self.create_js_file("widget-#{self.get_extension_name}-js.js")
+    # move back one dir
+    Dir.chdir("..")
+    # create the config folder
+    Dir.mkdir("config")
 
   end
 
