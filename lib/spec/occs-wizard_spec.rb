@@ -31,14 +31,9 @@ describe Wizard do
     end
 
     # developer id
-    it 'should throw if the value passed is empty' do
+    it 'should throw if the value passed is less than 8 chars in length' do
+      dev_id = "123456"
       expect { @wizard.set_developer_id("") }.to raise_error(ArgumentError)
-    end
-
-    it 'the argument passed should have the same size as a Fixnum' do
-      dev_id = 12345678
-      @wizard.set_developer_id("12345678")
-      expect(@wizard.get_developer_id.size).to eq(dev_id.to_s.size)
     end
 
     # creation date
@@ -71,7 +66,7 @@ describe Wizard do
 
     # Root directory
     it 'should throw if the root directory already exists' do
-      expect { @wizard.create_project_root_folder }.to raise_error(Exception)
+      expect { @wizard.create_project_structure }.to raise_error(Exception)
     end
 
   end

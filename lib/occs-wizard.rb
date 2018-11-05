@@ -7,7 +7,7 @@ class Wizard
   VERSION = 1
 
   def set_extension_id(ext)
-    raise ArgumentError, 'Argument is not a String' unless ext.size == 36 && ext.is_a?(String)
+    raise ArgumentError, 'Argument is not a valid OCCS extension id, please read the documentation for further details' unless ext.size == 36 && ext.is_a?(String)
     self.extension_id = ext
   end
 
@@ -16,18 +16,8 @@ class Wizard
   end
 
   def set_developer_id(dev_id)
-    raise ArgumentError, 'Developer ID value cannot be empty' unless dev_id.size != 0
-    string_length = dev_id.size
-    dev_id_number = dev_id.to_s
-    value = nil
-
-    if string_length == dev_id_number.size
-      value = dev_id.to_i
-    end
-
-    if value.class == Fixnum
-      self.developer_id = value
-    end
+    raise ArgumentError, 'Developer ID value is not valid, please read the documentation for further details' unless dev_id.size >= 8
+    self.developer_id = dev_id
   end
 
   def get_developer_id
@@ -157,7 +147,10 @@ class Wizard
   end
 
   # Project Structure
-  def create_project_root_folder
+  def create_project_structure
+    # create the project date
+    self.set_created_at
+    # go back one dir
     Dir.chdir('..')
     raise Exception, "Folder #{self.extension_name} already exists" unless !File.directory?("#{self.extension_name}")
     # make a new root dir with the extension name
@@ -205,6 +198,49 @@ class Wizard
 
   end
 
+  def get_user_input
+    puts "\n"
+    puts ".:: OCCS Widget Wizard ::."
+    puts "\n"
+    puts "Please have a look at the Oracle Commerce Cloud official documentation for more info"
+    puts "https://goo.gl/i5d6us"
+    puts "\n"
+    print "Please enter the extension id: "
+    dev_id = gets.chomp
+    self.set_extension_id(dev_id)
+    puts "\n"
+    print "Please enter your developer id: "
+    dev_id = gets.chomp
+    self.set_developer_id(dev_id)
+    puts "\n"
+    print "Enter the developer name: "
+    dev_name = gets.chomp
+    self.set_created_by(dev_name)
+    puts "\n"
+    print "Enter the extension name: "
+    ext_name = gets.chomp
+    self.set_extension_name(ext_name)
+    puts "\n"
+    print "Enter the extension description: "
+    ext_desc = gets.chomp
+    self.set_description(ext_desc)
+    puts "\n"
+
+    begin
+      self.create_project_structure
+      puts "\n"
+      puts "Project '#{self.extension_name}' was successfully created at #{Dir.pwd}"
+      puts "\n"
+    rescue
+      puts "Sorry but there was an error creating your widget structure, please try again"
+    end
+
+  end
+
+  def initialize
+    self.get_user_input
+  end
+
   private
   def convert_to_json(string)
     json = string.to_json
@@ -215,16 +251,3 @@ class Wizard
 end
 
 w = Wizard.new
-w.set_extension_id("123456789012345678901234567890123456")
-puts w.get_extension_id
-w.set_developer_id("12345678")
-puts w.get_developer_id
-w.set_extension_name "OCCS Extension"
-puts w.get_extension_name
-w.set_created_by
-w.get_created_by
-w.set_created_at
-w.get_created_at
-w.set_description("New OCCS Extension")
-w.get_description
-w.create_project_root_folder
