@@ -126,7 +126,7 @@ class Wizard
       // Dependencies\n
       ['jquery', 'knockout'],\n
       // Module Implementation\n
-      function(ko) {\n
+      function($, ko) {\n
          // We recommend enabling strict checking mode\n
          'use strict';\n
          // Private variables and functions can be defined here...\n
@@ -136,6 +136,7 @@ class Wizard
          };\n
          return {\n
           // Widget JS\n
+          onLoad: function(widget) {},\n
           // Some member variables...\n
           // Some public methods...\n
         }\n

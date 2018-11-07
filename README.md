@@ -39,7 +39,7 @@ If you see the above result in your command line, you are now ready to use it.
 Open a new terminal session and type"
 
 ```javascript
-irb
+sudo irb
 ```
 Once the new **irb** session has been loaded you must require the gem using the below command:
 
